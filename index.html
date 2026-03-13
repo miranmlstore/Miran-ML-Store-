@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miran StoreML | Official Digital Provider</title>
+    <title>Miran StoreML | Nota Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -68,16 +68,16 @@
             <div class="bg-slate-950 p-5 rounded-2xl mb-6 border border-white/5 text-left text-white">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-[10px] text-slate-500 font-bold uppercase">Metode DANA</span>
-                    <button onclick="copyDana()" id="copy-btn" class="text-[9px] bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full font-bold">SALIN</button>
+                    <button onclick="copyDana()" id="copy-btn" class="text-[9px] bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full font-bold">SALIN NOMOR</button>
                 </div>
                 <div class="text-xl font-gaming tracking-widest">083112056537</div>
                 <div class="text-[9px] text-slate-500 uppercase mt-1">A/N: SYA*** (Miran Store)</div>
             </div>
 
             <div class="space-y-2 text-left text-[11px] bg-white/5 p-4 rounded-xl mb-6 font-medium">
-                <div class="flex justify-between"><span>Harga Dasar:</span><span id="base-price"></span></div>
+                <div class="flex justify-between"><span>Harga Item:</span><span id="base-price"></span></div>
                 <div class="flex justify-between"><span>Pajak (11%):</span><span id="tax-price" class="text-green-400"></span></div>
-                <div class="border-t border-white/10 my-2 pt-2 flex justify-between font-bold text-sky-400"><span>TOTAL BAYAR:</span><span id="final-price"></span></div>
+                <div class="border-t border-white/10 my-2 pt-2 flex justify-between font-bold text-sky-400"><span>TOTAL NETT:</span><span id="final-price"></span></div>
             </div>
 
             <div class="p-4 bg-sky-500/10 rounded-2xl mb-6 border border-sky-500/20 text-left">
@@ -98,7 +98,7 @@
         const DANA_NUMBER = "083112056537"; 
 
         const rawProducts = [
-            { name: "Weekly Diamond Pass", base: 28000 }, // WDP DITAMBAHKAN DI SINI
+            { name: "Weekly Diamond Pass", base: 28000 },
             { name: "5 DM", base: 1800 }, { name: "15 DM", base: 4500 },
             { name: "19 DM", base: 5800 }, { name: "28 DM", base: 8500 },
             { name: "38 DM", base: 11000 }, { name: "44 DM", base: 13000 },
@@ -169,7 +169,37 @@
         }
 
         function finalizeTransaction() {
-            const msg = `*ORDER BARU - MIRAN STOREML*\n---------------------------\n*Produk:* ${selected.name}\n*Target:* ${document.getElementById('user_id').value} (${document.getElementById('zone_id').value})\n*WA:* ${document.getElementById('user_wa').value}\n*Total:* ${formatIDR(selected.final)}\n\n*PENTING:* Mohon lampirkan Bukti Transfer Anda di bawah ini agar pesanan diproses.\n---------------------------`;
+            // GENERATE DATA NOTA
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const invoiceID = "MSML-" + now.getTime(); // Unik berdasarkan waktu
+
+            // FORMAT PESAN NOTA DIGITAL (TEKS)
+            const msg = `*NOTA DIGITAL - MIRAN STOREML*
+-------------------------------------------
+*No. Invoice:* ${invoiceID}
+*Waktu:* ${dateStr}, ${timeStr} WIB
+
+*IDENTITAS PEMBELI*
+- User ID: ${document.getElementById('user_id').value}
+- Zone ID: ${document.getElementById('zone_id').value}
+- WhatsApp: ${document.getElementById('user_wa').value}
+
+*RINCIAN PRODUK*
+-------------------------------------------
+Item: ${selected.name}
+Harga Satuan: ${formatIDR(selected.base)}
+Pajak (PPN 11%): ${formatIDR(selected.tax)}
+
+-------------------------------------------
+*TOTAL BAYAR (NETT):* *${formatIDR(selected.final)}*
+-------------------------------------------
+
+*PENTING:* Mohon segera *Lampirkan Foto Bukti Transfer* Anda di bawah pesan ini agar admin dapat melakukan verifikasi dan proses pesanan Anda.
+
+_Terima kasih telah memilih Miran StoreML._`;
+
             window.location.href = `https://wa.me/${WA_ADMIN}?text=${encodeURIComponent(msg)}`;
         }
 
