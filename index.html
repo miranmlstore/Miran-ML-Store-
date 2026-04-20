@@ -2,17 +2,23 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MIRAN STOREML | STABLE PROTOCOL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon: #0ea5e9; --bg-dark: #020617; }
-        body { background-color: var(--bg-dark); color: #e2e8f0; font-family: sans-serif; overflow-x: hidden; }
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e2e8f0; 
+            font-family: sans-serif; 
+            overflow-x: hidden;
+            /* Tambahan untuk mencegah zoom di beberapa browser */
+            touch-action: pan-x pan-y;
+        }
         .font-gaming { font-family: 'Rajdhani', sans-serif; }
         .font-cyber { font-family: 'Orbitron', sans-serif; }
 
-        /* PERBAIKAN KLIK: Ukuran Tetap & Tanpa Pergeseran Layout */
         .product-card { 
             cursor: pointer; 
             transition: border-color 0.2s, background 0.2s; 
@@ -23,7 +29,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Hanya ganti warna, jangan ganti ukuran (scale) agar tidak menggeser tetangga */
         .product-card:active { background: rgba(14, 165, 233, 0.3); }
         
         .product-card.active {
@@ -35,11 +40,36 @@
         .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
         .btn-protocol { background: linear-gradient(135deg, #0ea5e9, #a855f7); transition: 0.3s; }
         #particles-js { position: fixed; inset: 0; z-index: -1; }
+
+        /* ANIMASI SALIN */
+        @keyframes copyPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+        .animate-copy { animation: copyPop 0.4s ease-in-out; }
+        
+        #copy-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #4ade80;
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 12px;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+        }
+        #copy-toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body class="pb-20">
 
     <div id="particles-js"></div>
+    <div id="copy-toast">NOMOR BERHASIL DISALIN!</div>
 
     <header class="pt-12 pb-8 text-center relative z-10">
         <h1 class="font-cyber text-3xl md:text-5xl font-bold text-white tracking-tighter">MIRAN STOREML</h1>
@@ -47,7 +77,6 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
-        
         <div class="lg:col-span-4">
             <div class="glass-card p-6 rounded-2xl sticky top-5">
                 <h2 class="font-gaming text-white font-bold tracking-widest mb-6">IDENTITAS TARGET</h2>
@@ -61,9 +90,7 @@
         <div class="lg:col-span-8">
             <div class="glass-card p-6 rounded-2xl">
                 <h2 class="font-gaming text-white font-bold tracking-widest mb-6 italic">PILIH NOMINAL_</h2>
-                
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="item-grid"></div>
-
                 <button onclick="initCheckout()" class="w-full mt-8 py-4 btn-protocol rounded-xl text-black font-black font-cyber text-xs tracking-widest uppercase shadow-lg shadow-sky-500/20">
                     Beli Sekarang
                 </button>
@@ -83,12 +110,12 @@
                 <div class="flex justify-between"><span>Tujuan:</span><span id="inv-uid" class="text-sky-400 font-bold"></span></div>
             </div>
 
-            <div class="bg-blue-600 rounded-xl p-4 mb-6">
+            <div class="bg-blue-600 rounded-xl p-4 mb-6 relative overflow-hidden">
                 <p class="text-[8px] text-white/70 font-bold uppercase mb-1">DANA (SYA***)</p>
                 <div class="flex justify-between items-center">
-                    <span class="text-xl font-cyber font-bold text-white tracking-wider">083112056537</span>
-                    <button onclick="copyDana()" class="bg-white/20 p-2 rounded-lg hover:bg-white/40 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
+                    <span id="dana-number" class="text-xl font-cyber font-bold text-white tracking-wider transition-all">083112056537</span>
+                    <button id="btn-copy" onclick="copyDana()" class="bg-white/20 p-2 rounded-lg hover:bg-white/40 transition active:scale-90">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="copy-icon" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
                     </button>
                 </div>
             </div>
@@ -129,7 +156,6 @@
         const grid = document.getElementById('item-grid');
         products.forEach(p => {
             const div = document.createElement('div');
-            // Ukuran dibuat statis dan padding ditambah agar area klik luas tapi tidak menggeser yang lain
             div.className = "p-4 rounded-xl product-card text-center flex flex-col items-center justify-center min-h-[85px]";
             div.innerHTML = `
                 <div class="text-[10px] font-black ${p.type === 'wdp' ? 'text-yellow-400' : 'text-sky-400'} font-cyber uppercase tracking-tighter">${p.name}</div>
@@ -144,14 +170,30 @@
             grid.appendChild(div);
         });
 
+        function copyDana() { 
+            navigator.clipboard.writeText(DANA_NUM); 
+            
+            // Animasi Angka
+            const numEl = document.getElementById('dana-number');
+            const iconEl = document.getElementById('btn-copy');
+            numEl.classList.add('animate-copy');
+            
+            // Tampilkan Toast
+            const toast = document.getElementById('copy-toast');
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                numEl.classList.remove('animate-copy');
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
         function initCheckout() {
             const uid = document.getElementById('user_id').value;
             const zid = document.getElementById('zone_id').value;
             if(!uid || !zid || !selected) return alert("Lengkapi data!");
-            
             const tax = selected.base * PPN_RATE;
             const total = selected.base + tax;
-
             document.getElementById('inv-uid').innerText = uid + " (" + zid + ")";
             document.getElementById('inv-item').innerText = selected.name;
             document.getElementById('inv-total').innerText = formatIDR(total);
@@ -164,7 +206,6 @@
             window.location.href = `https://wa.me/${WA_ADMIN}?text=${encodeURIComponent(msg)}`;
         }
 
-        function copyDana() { navigator.clipboard.writeText(DANA_NUM); alert("DANA Disalin!"); }
         function closeModal() { document.getElementById('payModal').style.display = 'none'; }
 
         particlesJS("particles-js", {
