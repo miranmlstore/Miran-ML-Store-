@@ -3,207 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miran StoreML | Nota Digital</title>
+    <title>Miran StoreML | Future of Top Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #0ea5e9; --bg-deep: #010409; --bg-vignette: #0a1221; }
+        :root { 
+            --neon: #0ea5e9; 
+            --neon-glow: rgba(14, 165, 233, 0.5); 
+            --bg-deep: #010409;
+            --bg-vignette: #0a1221;
+        }
+        
         body { 
             background-image: radial-gradient(circle at center, var(--bg-vignette) 0%, var(--bg-deep) 70%, var(--bg-deep) 100%);
             background-color: var(--bg-deep);
-            color: #f1f5f9; font-family: 'Poppins', sans-serif; min-height: 100vh;
+            color: #f1f5f9; 
+            font-family: 'Poppins', sans-serif; 
+            overflow-x: hidden; 
+            min-height: 100vh;
         }
-        h1, h2, h3, .font-gaming { font-family: 'Rajdhani', sans-serif; }
+        
+        .font-gaming { font-family: 'Rajdhani', sans-serif; }
+        
+        #preloader { position: fixed; inset: 0; background: var(--bg-deep); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
+        #preloader.hidden { opacity: 0; visibility: hidden; }
+        .loader-logo { font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--neon); text-shadow: 0 0 15px var(--neon-glow); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.95); } }
+
         #particles-js { position: fixed; inset: 0; z-index: -1; }
-        .glass { background: rgba(10, 18, 33, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.02); }
-        .neon-border { border: 1px solid rgba(14, 165, 233, 0.15); box-shadow: 0 0 15px rgba(14, 165, 233, 0.05); }
-        .btn-glow { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); transition: 0.3s ease; }
-        .btn-glow:hover { box-shadow: 0 0 30px rgba(14, 165, 233, 0.7); transform: translateY(-2px); }
-        input { background: rgba(5, 10, 20, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.03) !important; color: white !important; outline: none; }
-        input:focus { border-color: var(--neon) !important; box-shadow: 0 0 15px rgba(14, 165, 233, 0.15); }
-        .product-card { background: rgba(15, 23, 42, 0.4); border-radius: 1rem; border: 1px solid rgba(255,255,255,0.02); cursor: pointer; transition: 0.3s; }
-        .product-card.card-active { border-color: var(--neon); background: rgba(14, 165, 233, 0.15); box-shadow: 0 0 25px rgba(14, 165, 233, 0.25); }
-        #warning-toast { opacity: 0; visibility: hidden; transform: translate(-50%, 20px); transition: 0.3s; }
-        #warning-toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+
+        .glass { background: rgba(10, 18, 33, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.03); }
+        .neon-border { border: 1px solid rgba(14, 165, 233, 0.15); box-shadow: 0 0 15px rgba(14, 165, 233, 0.05); transition: 0.3s; }
+        .neon-border:hover { border-color: var(--neon); box-shadow: 0 0 25px rgba(14, 165, 233, 0.2); }
+        
+        .product-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.02); cursor: pointer; transition: 0.3s ease; position: relative; }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--neon); background: rgba(14, 165, 233, 0.05); }
+        .product-card.active { border-color: var(--neon); background: rgba(14, 165, 233, 0.15); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); }
+        
+        .btn-glow { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); transition: 0.3s; }
+        .btn-glow:hover { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6); transform: scale(1.02); }
+
+        input { background: rgba(5, 10, 20, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.05) !important; color: white !important; outline: none; }
+        input:focus { border-color: var(--neon) !important; box-shadow: 0 0 10px rgba(14, 165, 233, 0.2); }
     </style>
 </head>
 <body class="pb-20">
 
-    <div id="particles-js"></div>
-
-    <div id="warning-toast" class="fixed bottom-10 left-1/2 z-[200]">
-        <div class="bg-red-600 text-white px-5 py-3 rounded-2xl flex items-center gap-3 shadow-2xl">
-            <span id="warning-msg" class="text-[11px] font-bold uppercase tracking-widest">Peringatan</span>
-            <button onclick="hideWarning()">✕</button>
-        </div>
+    <div id="preloader">
+        <div class="loader-logo">MIRAN STORE</div>
+        <div class="text-[10px] text-slate-600 mt-2 tracking-[0.5em] font-gaming">SINKRONISASI DATA...</div>
     </div>
 
-    <header class="pt-16 pb-10 text-center px-4 relative z-10">
-        <h1 class="font-['Orbitron'] text-3xl text-sky-400 tracking-tighter uppercase mb-1">Miran Store<span class="text-white font-light">ML</span></h1>
-        <p class="text-[9px] tracking-[0.3em] text-slate-400 uppercase">Premium Provider • All Prices Inc. 11% PPN</p>
+    <div id="particles-js"></div>
+
+    <header class="pt-16 pb-12 text-center flex flex-col items-center relative z-10">
+        <div class="w-16 h-16 bg-sky-500/10 rounded-full flex items-center justify-center mb-5 border border-sky-500/20 shadow-[0_0_20px_rgba(14,165,233,0.1)]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        </div>
+        <h1 class="font-['Orbitron'] text-4xl text-sky-400 tracking-tighter uppercase">Miran Store<span class="text-white font-light">ML</span></h1>
+        <p class="text-[11px] tracking-[0.3em] text-slate-500 mt-2 uppercase font-bold italic">High-Speed Diamond Injector</p>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 space-y-6 relative z-10">
-        <div id="box-data" class="glass p-6 rounded-3xl neon-border">
-            <h2 class="font-gaming text-sky-400 text-xs tracking-widest uppercase mb-4">01. Masukkan Data Akun</h2>
-            <div class="grid grid-cols-3 gap-3 mb-3">
-                <input type="number" id="user_id" placeholder="User ID" class="col-span-2 p-4 rounded-2xl text-sm">
-                <input type="number" id="zone_id" placeholder="Zone" class="p-4 rounded-2xl text-sm text-center">
+    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+        
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass p-7 rounded-2xl neon-border">
+                <h2 class="font-gaming text-sky-400 font-bold mb-5 text-sm tracking-widest uppercase">01. Identitas Akun</h2>
+                <div class="flex gap-3">
+                    <input type="number" id="user_id" placeholder="User ID" class="w-full p-4 rounded-xl text-sm font-bold">
+                    <input type="number" id="zone_id" placeholder="Zone" class="w-28 p-4 rounded-xl text-sm font-bold text-center">
+                </div>
             </div>
-            <input type="number" id="user_wa" placeholder="WhatsApp (628...)" class="w-full p-4 rounded-2xl text-sm">
+
+            <div class="glass p-7 rounded-2xl border border-white/5">
+                <h2 class="font-gaming text-purple-400 font-bold mb-5 text-xs tracking-widest uppercase text-center">Arsip Pesanan</h2>
+                <div class="flex gap-2 mb-5">
+                    <input type="text" id="search_id" placeholder="Cek User ID..." class="w-full p-3 rounded-xl text-xs">
+                    <button onclick="trackOrder()" class="px-5 bg-purple-600/20 text-purple-300 rounded-xl text-xs font-bold border border-purple-500/20 hover:bg-purple-600 hover:text-white transition">CARI</button>
+                </div>
+                <div id="track-result" class="space-y-3 max-h-40 overflow-y-auto pr-2"></div>
+            </div>
         </div>
 
-        <div id="box-item" class="glass p-6 rounded-3xl neon-border">
-            <h2 class="font-gaming text-sky-400 text-xs tracking-widest uppercase mb-4">02. Pilih Produk</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8" id="item-grid"></div>
-            <button onclick="initCheckout()" class="w-full py-5 btn-glow rounded-2xl text-slate-950 font-black font-gaming tracking-[0.2em] uppercase text-sm">BELI SEKARANG</button>
+        <div class="lg:col-span-8">
+            <div class="glass p-8 rounded-3xl neon-border">
+                <div class="flex justify-between items-center mb-7 border-b border-white/5 pb-4">
+                    <h2 class="font-gaming text-white font-bold text-sm tracking-widest uppercase italic">02. Pilih Diamond</h2>
+                    <span class="text-[10px] text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">*Belum termasuk PPN 11%</span>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10" id="item-grid"></div>
+                
+                <button onclick="initCheckout()" class="w-full py-5 btn-glow rounded-2xl text-slate-950 font-black font-gaming tracking-[0.2em] uppercase text-sm shadow-2xl">Beli Sekarang</button>
+            </div>
         </div>
     </main>
 
     <div id="payModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[90] hidden flex items-center justify-center p-4">
-        <div class="glass w-full max-w-sm rounded-3xl p-8 border border-sky-500/20 text-center">
-            <h3 class="text-xs text-slate-400 uppercase tracking-widest mb-2">Total Pembayaran</h3>
-            <div class="text-3xl font-black text-sky-400 font-gaming italic mb-6" id="inv-price">Rp 0</div>
+        <div class="glass w-full max-w-md rounded-3xl p-8 border border-sky-500/20 relative">
+            <div class="text-center mb-8">
+                <span id="inv-code" class="text-[10px] text-slate-500 font-mono tracking-widest bg-white/5 px-3 py-1 rounded-full uppercase">INV-XXXXX</span>
+                <h3 class="font-gaming text-5xl font-bold text-sky-400 mt-5 italic tracking-tighter" id="inv-total">Rp 0</h3>
+                <p class="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">Total Bayar (Termasuk PPN)</p>
+            </div>
             
-            <div class="bg-slate-950 p-5 rounded-2xl mb-6 border border-white/5 text-left text-white">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase">Metode DANA</span>
-                    <button onclick="copyDana()" id="copy-btn" class="text-[9px] bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full font-bold">SALIN NOMOR</button>
+            <div class="space-y-3 bg-white/5 p-5 rounded-2xl mb-6 border border-white/5 text-sm">
+                <div class="flex justify-between text-slate-400"><span>Produk:</span><span id="inv-item" class="text-white font-bold"></span></div>
+                <div class="flex justify-between text-slate-400"><span>Harga Layanan:</span><span id="inv-base" class="text-white"></span></div>
+                <div class="flex justify-between text-yellow-500 font-bold"><span>PPN (11%):</span><span id="inv-tax"></span></div>
+                <div class="border-t border-white/10 pt-2 flex justify-between text-sky-400 font-black"><span>ID Tujuan:</span><span id="inv-uid"></span></div>
+            </div>
+
+            <div class="bg-slate-950 p-6 rounded-2xl mb-7 border border-white/5 relative overflow-hidden">
+                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2 tracking-widest">Metode: DANA</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-gaming text-2xl font-black text-white tracking-wider">083112056537</span>
+                    <button onclick="copyDana()" class="bg-sky-500/10 text-sky-400 text-[10px] px-4 py-2 rounded-full font-bold border border-sky-500/20 hover:bg-sky-500 hover:text-black transition">SALIN</button>
                 </div>
-                <div class="text-xl font-gaming tracking-widest">083112056537</div>
-                <div class="text-[9px] text-slate-500 uppercase mt-1">A/N: SYA*** (Miran Store)</div>
+                <p class="text-[11px] text-sky-400 mt-2 font-bold uppercase">A/N: SYA***</p>
             </div>
 
-            <div class="space-y-2 text-left text-[11px] bg-white/5 p-4 rounded-xl mb-6 font-medium">
-                <div class="flex justify-between"><span>Harga Item:</span><span id="base-price"></span></div>
-                <div class="flex justify-between"><span>Pajak (11%):</span><span id="tax-price" class="text-green-400"></span></div>
-                <div class="border-t border-white/10 my-2 pt-2 flex justify-between font-bold text-sky-400"><span>TOTAL NETT:</span><span id="final-price"></span></div>
+            <div class="mb-7">
+                <label class="text-[10px] text-slate-400 uppercase font-bold mb-2 block italic">Lampirkan Bukti Transfer DANA</label>
+                <input type="file" id="proof_file" class="text-[10px] w-full file:bg-sky-500/10 file:text-sky-400 file:border-none file:px-4 file:py-2 file:rounded-full file:font-bold cursor-pointer">
             </div>
 
-            <div class="p-4 bg-sky-500/10 rounded-2xl mb-6 border border-sky-500/20 text-left">
-                <p class="text-[10px] text-sky-300 leading-relaxed font-medium">
-                    <span class="text-white font-bold block mb-1">📢 PETUNJUK:</span>
-                    Klik tombol di bawah, lalu <b>Kirim Foto Bukti Transfer</b> di chat WhatsApp agar admin bisa langsung memproses pesananmu.
-                </p>
-            </div>
-
-            <button onclick="finalizeTransaction()" class="w-full py-4 bg-green-500 text-slate-950 font-black font-gaming rounded-2xl text-[12px] uppercase tracking-[0.2em] mb-3">KONFIRMASI DI WA</button>
-            <button onclick="closeModal()" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Batalkan</button>
+            <button onclick="finalizeTransaction()" class="w-full py-4 bg-green-500 text-slate-950 font-black font-gaming rounded-xl text-[12px] uppercase tracking-widest shadow-lg shadow-green-500/20">Konfirmasi Pembayaran</button>
+            <button onclick="closeModal()" class="w-full mt-4 text-[10px] text-slate-500 font-bold uppercase tracking-widest">Batalkan</button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        const WA_ADMIN = "6283112056537"; 
-        const DANA_NUMBER = "083112056537"; 
+        const WA_ADMIN = "6283112056537";
+        const PPN_RATE = 0.11;
 
-        const rawProducts = [
-            { name: "Weekly Diamond Pass", base: 28000 },
-            { name: "5 DM", base: 1800 }, { name: "15 DM", base: 4500 },
-            { name: "19 DM", base: 5800 }, { name: "28 DM", base: 8500 },
-            { name: "38 DM", base: 11000 }, { name: "44 DM", base: 13000 },
-            { name: "50 DM", base: 14500 }, { name: "54 DM", base: 15500 },
-            { name: "56 DM", base: 16500 }, { name: "100 DM", base: 28500 },
-            { name: "110 DM", base: 31000 }, { name: "257 DM", base: 72000 },
-            { name: "324 DM", base: 92000 }, { name: "512 DM", base: 145000 },
-            { name: "750 DM", base: 210000 }, { name: "875 DM", base: 242000 },
-            { name: "1050 DM", base: 290000 }, { name: "2010 DM", base: 560000 },
-            { name: "4020 DM", base: 1120000 }
+        // HARGA TAMPILAN AWAL (SEBELUM PPN)
+        const products = [
+            { name: "5 Diamonds", base: 1800 },
+            { name: "12 Diamonds", base: 3600 },
+            { name: "28 Diamonds", base: 8100 },
+            { name: "44 Diamonds", base: 12600 },
+            { name: "59 Diamonds", base: 16200 },
+            { name: "85 Diamonds", base: 22500 },
+            { name: "170 Diamonds", base: 44100 },
+            { name: "296 Diamonds", base: 76500 },
+            { name: "408 Diamonds", base: 106300 },
+            { name: "568 Diamonds", base: 144100 },
+            { name: "875 Diamonds", base: 220700 },
+            { name: "Weekly Diamond Pass", base: 27000, type: 'wdp' },
         ];
 
-        const products = rawProducts.map(p => {
-            const tax = p.base * 0.11;
-            let final = Math.ceil((p.base + tax) / 500) * 500; 
-            return { ...p, tax: tax, final: final };
-        });
-
         let selected = null;
-        let warningTimer = null;
-
         function formatIDR(n) { return "Rp " + Math.round(n).toLocaleString('id-ID'); }
 
         const grid = document.getElementById('item-grid');
         products.forEach(p => {
             const div = document.createElement('div');
-            div.className = "p-4 product-card text-center";
-            div.innerHTML = `<div class="text-[11px] font-bold text-sky-400 font-gaming uppercase">${p.name}</div><div class="text-[10px] text-white mt-1 font-bold">${formatIDR(p.final)}</div>`;
+            div.className = "p-5 product-card rounded-2xl text-center transition-all";
+            div.innerHTML = `
+                <div class="text-[13px] font-bold ${p.type === 'wdp' ? 'text-yellow-400' : 'text-sky-400'} font-gaming uppercase">${p.name}</div>
+                <div class="text-[11px] text-white/50 mt-1">${formatIDR(p.base)}</div>
+            `;
             div.onclick = () => {
-                document.querySelectorAll('.product-card').forEach(el => el.classList.remove('card-active'));
-                div.classList.add('card-active');
+                document.querySelectorAll('.product-card').forEach(el => el.classList.remove('active'));
+                div.classList.add('active');
                 selected = p;
-                hideWarning();
             };
             grid.appendChild(div);
         });
 
-        particlesJS("particles-js", {
-            particles: { number: { value: 25 }, color: { value: "#0ea5e9" }, opacity: { value: 0.1 }, move: { speed: 1 } }
-        });
-
-        function showWarning(msg) {
-            const toast = document.getElementById('warning-toast');
-            document.getElementById('warning-msg').innerText = msg;
-            if(warningTimer) clearTimeout(warningTimer);
-            toast.classList.add('show');
-            warningTimer = setTimeout(hideWarning, 3000);
-        }
-
-        function hideWarning() { document.getElementById('warning-toast').classList.remove('show'); }
-
-        function copyDana() {
-            navigator.clipboard.writeText(DANA_NUMBER);
-            document.getElementById('copy-btn').innerText = "COPIED";
-            setTimeout(() => document.getElementById('copy-btn').innerText = "SALIN", 2000);
-        }
-
         function initCheckout() {
-            if(!document.getElementById('user_id').value || !document.getElementById('user_wa').value) {
-                showWarning("LENGKAPI DATA AKUN!"); return;
-            }
-            if(!selected) { showWarning("PILIH NOMINAL!"); return; }
-            document.getElementById('inv-price').innerText = formatIDR(selected.final);
-            document.getElementById('base-price').innerText = formatIDR(selected.base);
-            document.getElementById('tax-price').innerText = "+" + formatIDR(selected.tax);
-            document.getElementById('final-price').innerText = formatIDR(selected.final);
+            const uid = document.getElementById('user_id').value;
+            const zid = document.getElementById('zone_id').value;
+            if(!uid || !zid || !selected) { alert("Lengkapi data dan pilih produk!"); return; }
+            
+            const tax = selected.base * PPN_RATE;
+            const total = selected.base + tax;
+            const invCode = "MS-" + Date.now().toString().slice(-6);
+
+            document.getElementById('inv-code').innerText = invCode;
+            document.getElementById('inv-uid').innerText = uid + " (" + zid + ")";
+            document.getElementById('inv-item').innerText = selected.name;
+            document.getElementById('inv-base').innerText = formatIDR(selected.base);
+            document.getElementById('inv-tax').innerText = "+ " + formatIDR(tax);
+            document.getElementById('inv-total').innerText = formatIDR(total);
+            
             document.getElementById('payModal').classList.remove('hidden');
         }
 
         function finalizeTransaction() {
-            // GENERATE DATA NOTA
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            const invoiceID = "MSML-" + now.getTime(); // Unik berdasarkan waktu
-
-            // FORMAT PESAN NOTA DIGITAL (TEKS)
-            const msg = `*NOTA DIGITAL - MIRAN STOREML*
--------------------------------------------
-*No. Invoice:* ${invoiceID}
-*Waktu:* ${dateStr}, ${timeStr} WIB
-
-*IDENTITAS PEMBELI*
-- User ID: ${document.getElementById('user_id').value}
-- Zone ID: ${document.getElementById('zone_id').value}
-- WhatsApp: ${document.getElementById('user_wa').value}
-
-*RINCIAN PRODUK*
--------------------------------------------
-Item: ${selected.name}
-Harga Satuan: ${formatIDR(selected.base)}
-Pajak (PPN 11%): ${formatIDR(selected.tax)}
-
--------------------------------------------
-*TOTAL BAYAR (NETT):* *${formatIDR(selected.final)}*
--------------------------------------------
-
-*PENTING:* Mohon segera *Lampirkan Foto Bukti Transfer* Anda di bawah pesan ini agar admin dapat melakukan verifikasi dan proses pesanan Anda.
-
-_Terima kasih telah memilih Miran StoreML._`;
-
+            if(!document.getElementById('proof_file').files[0]) { alert("Upload bukti transfer!"); return; }
+            const total = document.getElementById('inv-total').innerText;
+            const msg = `*ORDER LOG - MIRAN STOREML*\n========================\n*Inv:* ${document.getElementById('inv-code').innerText}\n*Target:* ${document.getElementById('inv-uid').innerText}\n*Produk:* ${selected.name}\n*Total (+PPN 11%):* ${total}\n========================\n*Status:* Menunggu Verifikasi Admin.`;
             window.location.href = `https://wa.me/${WA_ADMIN}?text=${encodeURIComponent(msg)}`;
         }
 
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 1000);
+        });
+
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 40 },
+                color: { value: "#0ea5e9" },
+                opacity: { value: 0.2 },
+                size: { value: 2 },
+                line_linked: { enable: true, distance: 150, color: "#0ea5e9", opacity: 0.1, width: 1 },
+                move: { enable: true, speed: 1 }
+            }
+        });
+
+        function copyDana() { navigator.clipboard.writeText("083112056537"); alert("Nomor DANA disalin!"); }
         function closeModal() { document.getElementById('payModal').classList.add('hidden'); }
+        
+        function trackOrder() {
+            const q = document.getElementById('search_id').value;
+            const res = document.getElementById('track-result');
+            res.innerHTML = q ? `<p class='text-[10px] text-yellow-500 italic text-center'>Mencari data untuk ID ${q}...</p>` : "";
+        }
     </script>
 </body>
 </html>
